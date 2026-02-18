@@ -78,3 +78,5 @@ if (providers.gradleProperty("paperBuildCacheEnabled").orNull.toBoolean()) {
         }
     }
 }
+
+include("scalepaper-master-client")
