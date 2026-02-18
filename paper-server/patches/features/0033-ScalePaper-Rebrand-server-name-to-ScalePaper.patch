@@ -1,0 +1,25 @@
+From cc7f1fad992879fee76c7fa31505fb503fa8ebd6 Mon Sep 17 00:00:00 2001
+From: Adnan Mustafa Ahmed Hassan <65522003+Notkiruzu@users.noreply.github.com>
+Date: Wed, 18 Feb 2026 08:50:57 +0800
+Subject: [PATCH] ScalePaper - Rebrand server name to ScalePaper
+
+---
+ .../src/main/java/io/papermc/paper/ServerBuildInfoImpl.java     | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/paper-server/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java b/paper-server/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
+index 74ffdc823..d7d947427 100644
+--- a/paper-server/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
++++ b/paper-server/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
+@@ -30,7 +30,7 @@ public record ServerBuildInfoImpl(
+     private static final String ATTRIBUTE_GIT_BRANCH = "Git-Branch";
+     private static final String ATTRIBUTE_GIT_COMMIT = "Git-Commit";
+ 
+-    private static final String BRAND_PAPER_NAME = "Paper";
++    private static final String BRAND_PAPER_NAME = "ScalePaper";
+ 
+     private static final String BUILD_DEV = "DEV";
+ 
+-- 
+2.53.0.windows.1
+
