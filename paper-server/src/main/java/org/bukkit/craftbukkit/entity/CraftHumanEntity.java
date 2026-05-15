@@ -2,14 +2,15 @@ package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import io.papermc.paper.adventure.PaperAdventure;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundMountScreenOpenPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
@@ -55,6 +56,7 @@ import org.bukkit.craftbukkit.inventory.CraftMerchantCustom;
 import org.bukkit.craftbukkit.inventory.CraftRecipe;
 import org.bukkit.craftbukkit.inventory.util.CraftMenus;
 import org.bukkit.craftbukkit.util.CraftLocation;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
@@ -193,7 +195,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         Preconditions.checkArgument(location.getWorld() != null, "Location needs to be in a world");
         Preconditions.checkArgument(location.getWorld().equals(this.getWorld()), "Cannot sleep across worlds");
 
-        BlockPos pos = CraftLocation.toBlockPosition(location);
+        BlockPos pos = CraftLocation.toBlockPos(location);
         BlockState state = this.getHandle().level().getBlockState(pos);
         if (!(state.getBlock() instanceof BedBlock)) {
             return false;
@@ -398,7 +400,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
                 return null;
             }
         }
-        this.getHandle().openMenu(Blocks.CRAFTING_TABLE.defaultBlockState().getMenuProvider(this.getHandle().level(), CraftLocation.toBlockPosition(location)));
+        this.getHandle().openMenu(Blocks.CRAFTING_TABLE.defaultBlockState().getMenuProvider(this.getHandle().level(), CraftLocation.toBlockPos(location)));
         if (force) {
             this.getHandle().containerMenu.checkReachable = false;
         }
@@ -418,7 +420,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         }
 
         // If there isn't an enchant table we can force create one, won't be very useful though.
-        BlockPos pos = CraftLocation.toBlockPosition(location);
+        BlockPos pos = CraftLocation.toBlockPos(location);
         // Paper start
         MenuProvider menuProvider = Blocks.ENCHANTING_TABLE.defaultBlockState().getMenuProvider(this.getHandle().level(), pos);
         if (menuProvider == null) {
@@ -726,7 +728,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         RecipeManager manager = this.getHandle().level().getServer().getRecipeManager();
 
         for (NamespacedKey recipeKey : recipeKeys) {
-            Optional<? extends RecipeHolder<?>> recipe = manager.byKey(CraftRecipe.toMinecraft(recipeKey));
+            Optional<? extends RecipeHolder<?>> recipe = manager.byKey(CraftNamespacedKey.toResourceKey(Registries.RECIPE, recipeKey));
             if (recipe.isEmpty()) {
                 continue;
             }
@@ -894,11 +896,10 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     @Override
-    public Firework fireworkBoost(ItemStack fireworkItemStack) {
-        Preconditions.checkArgument(fireworkItemStack != null, "fireworkItemStack must not be null");
-        Preconditions.checkArgument(fireworkItemStack.getType() == Material.FIREWORK_ROCKET, "fireworkItemStack must be of type %s", Material.FIREWORK_ROCKET);
+    public Firework fireworkBoost(ItemStack boosterItem) {
+        Preconditions.checkArgument(boosterItem != null, "boosterItem cannot be null");
 
-        FireworkRocketEntity fireworks = new FireworkRocketEntity(this.getHandle().level(), CraftItemStack.asNMSCopy(fireworkItemStack), this.getHandle());
+        FireworkRocketEntity fireworks = new FireworkRocketEntity(this.getHandle().level(), CraftItemStack.asNMSCopy(boosterItem), this.getHandle());
         boolean success = this.getHandle().level().addFreshEntity(fireworks, SpawnReason.CUSTOM);
         return success ? (Firework) fireworks.getBukkitEntity() : null;
     }
